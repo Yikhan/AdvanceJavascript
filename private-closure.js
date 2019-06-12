@@ -1,7 +1,7 @@
-
+// 使用闭包实现私有成员
 
 var person = (function() {
-    var age = 25; //私有变量
+    var age = 25; //私有成员
     return {
         name: "Nicholas",
         getAge: function () {
