@@ -24,30 +24,53 @@ var result1 = loadImg(src1)
 var result2 = loadImg(src2)
 
 // 1. 基本操作 可以用catch代替then里面的error函数处理，最后的catch可以捕获前面所有的错误
-// result1.then( (img) => {
-//   console.log('Succuess', img.width)
-// }).catch( (error) => {
-//   console.log(error)
-// })
+function test1 () {
+  result1.then( (img) => {
+    console.log('Succuess', img.width)
+  }).catch( (error) => {
+    console.log(error)
+  })
+  // promise可以重复使用，结果不变
+  result1.then( (img) => {
+    console.log('Success again', img.width)
+  }).catch( (error) => {
+    console.log(error)
+  })
+}
 
 // 2. 串联操作
-// result1.then( (img1) => {
-//   console.log('first image loaded', img1.width)
-//   return result2 // 链式处理第二个promise 否则后面的then还是第一个图片的promise
-// }).then( (img2) => {
-//   console.log('second image loaded', img2.width)
-// }).catch( (error) => {
-//   console.log(error)
-// })
+function test2 () {
+  result1.then( (img1) => {
+    console.log('first image loaded', img1.width)
+    // 根据Promise标准，then函数必须要返回一个promise
+    // 没有手动return的话返回的就是当前的promise
+  }).then( (img1) => {
+    console.log('first image loaded, go to next', img1.width)
+    return result2 // 手动返回第二个promise 否则后面的then还是第一个图片的promise
+  }).then( (img2) => {
+    console.log('second image loaded', img2.width)
+  }).catch( (error) => {
+    console.log(error)
+  })
+}
 
 // 3. Promise All and Race
 // all会等待所有promise都完成后才触发成功，而race谁快就执行谁
-Promise.all([result1, result2]).then( (datas) => {
-  // all返回一个数组
-  console.log('all', datas[0])
-  console.log('all', datas[1])
-})
+// Promise 的状态 Pending -> Fullfilled or Rejected
+// 状态变化不可逆
+function test3 () {
+  Promise.all([result1, result2]).then( (datas) => {
+    // all返回一个数组
+    console.log('all', datas[0])
+    console.log('all', datas[1])
+  })
+  
+  Promise.race([result1,result2]).then( (data) => {
+    console.log('race', data)
+  })
+}
 
-Promise.race([result1,result2]).then( (data) => {
-  console.log('race', data)
-})
+
+
+// 执行所需要实验的函数例子
+test1()
