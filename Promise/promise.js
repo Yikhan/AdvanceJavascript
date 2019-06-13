@@ -17,13 +17,37 @@ function loadImg(src) {
   return promise
 }
 
-
 var src1 = 'https://www.imooc.com/static/img/index/logo.png'
-var src2 = 'https://img1.sycdn.imooc.com/szimg/5cb68a1408ed350506000338.jpg'
+var src2 = 'https://img2.mukewang.com/5c35e6ec0001500a05000445-140-140.jpg'
 
 var result1 = loadImg(src1)
-result1.then( (img) => {
-  console.log('Succuess', img.width)
-}).catch( (error) => {
-  console.log(error)
+var result2 = loadImg(src2)
+
+// 1. 基本操作 可以用catch代替then里面的error函数处理，最后的catch可以捕获前面所有的错误
+// result1.then( (img) => {
+//   console.log('Succuess', img.width)
+// }).catch( (error) => {
+//   console.log(error)
+// })
+
+// 2. 串联操作
+// result1.then( (img1) => {
+//   console.log('first image loaded', img1.width)
+//   return result2 // 链式处理第二个promise 否则后面的then还是第一个图片的promise
+// }).then( (img2) => {
+//   console.log('second image loaded', img2.width)
+// }).catch( (error) => {
+//   console.log(error)
+// })
+
+// 3. Promise All and Race
+// all会等待所有promise都完成后才触发成功，而race谁快就执行谁
+Promise.all([result1, result2]).then( (datas) => {
+  // all返回一个数组
+  console.log('all', datas[0])
+  console.log('all', datas[1])
+})
+
+Promise.race([result1,result2]).then( (data) => {
+  console.log('race', data)
 })
