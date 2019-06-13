@@ -19,7 +19,7 @@ function loadImg(src) {
 
 var src1 = 'https://www.imooc.com/static/img/index/logo.png'
 var src2 = 'https://img2.mukewang.com/5c35e6ec0001500a05000445-140-140.jpg'
-
+var srcError = 'https://test' // 设置一个错误的图片地址
 var result1 = loadImg(src1)
 var result2 = loadImg(src2)
 
@@ -40,13 +40,20 @@ function test1 () {
 
 // 2. 串联操作
 function test2 () {
+  // 根据Promise标准，then函数必须要返回一个promise
   result1.then( (img1) => {
     console.log('first image loaded', img1.width)
-    // 根据Promise标准，then函数必须要返回一个promise
-    // 没有手动return的话返回的就是当前的promise
+    // 如果then中的回调函数返回一个值，那么then返回的Promise将会成为接受状态，并且将返回的值作为接受状态的回调函数的参数值
+    return img1
   }).then( (img1) => {
     console.log('first image loaded, go to next', img1.width)
-    return result2 // 手动返回第二个promise 否则后面的then还是第一个图片的promise
+    // 如果then中的回调函数没有返回值，那么then返回的Promise将会成为接受状态，并且该接受状态的回调函数的参数值为undefined
+    // return no thing here
+  }).then( (img1) => {
+    // 这里如果读取img1会发现是undefined，因为上面的then没有返回任何值
+    console.log('first image loaded, img1 should be undefined')
+  }).then( () => {
+    return result2 // 手动返回第二个promise
   }).then( (img2) => {
     console.log('second image loaded', img2.width)
   }).catch( (error) => {
@@ -54,9 +61,18 @@ function test2 () {
   })
 }
 
+function test2Error () {
+  var resultError = loadImg(srcError)
+  resultError.then( (img) => {
+    console.log('Success', img.width)
+  }).catch( (error) => {
+    console.log(error)
+  })
+}
+
 // 3. Promise All and Race
 // all会等待所有promise都完成后才触发成功，而race谁快就执行谁
-// Promise 的状态 Pending -> Fullfilled or Rejected
+// Promise 的状态 Pending -> Fullfillment or Rejection
 // 状态变化不可逆
 function test3 () {
   Promise.all([result1, result2]).then( (datas) => {
@@ -70,7 +86,7 @@ function test3 () {
   })
 }
 
-
-
 // 执行所需要实验的函数例子
 test1()
+test2()
+test3()
