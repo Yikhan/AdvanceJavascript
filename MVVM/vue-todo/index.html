@@ -10,7 +10,7 @@
 
 <div id="app">
   <div>
-    <input type="number" v-model.number="value" @input="onValueChange">
+    <input type="number" :value="value" @input="onValueChange">
     <button id="btn-display" @click="display">show value</button>
   </div>
   <div>
@@ -40,6 +40,11 @@
       onValueChange (event) {
         if (!event.target.value) {
           event.target.value = 0
+        }
+        if (/^\d*.?\d{0,2}$/.test(event.target.value)) {
+          this.value = parseFloat(event.target.value)
+        } else {
+          event.target.value = this.value
         }
         console.log('input: ', event.target.value)
         console.log('value: ', this.value)
